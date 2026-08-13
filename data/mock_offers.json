@@ -1,0 +1,86 @@
+[
+    {
+        "id": "JOB-001",
+        "title": "Machine Learning Engineer (Junior/Mid)",
+        "company": "TechSolutions Global",
+        "description": "We are seeking a Machine Learning Engineer to build end-to-end ML pipelines. Requirements: Python, PyTorch, and experience with REST APIs. Familiarity with LLMs and RAG is a big plus. The position is fully remote.",
+        "url": "https://careers.techsolutions.global/jobs/ml-engineer-junior-mid"
+    },
+    {
+        "id": "JOB-002",
+        "title": "Senior AI Architect",
+        "company": "DataCorp España",
+        "description": "Buscamos un AI Architect Senior con más de 6 años de experiencia comercial liderando equipos de desarrollo. Indispensable presencialidad en nuestras oficinas centrales de Barcelona.",
+        "url": "https://datacorp.es/ofertas/senior-ai-architect"
+    },
+    {
+        "id": "JOB-003",
+        "title": "Data Scientist",
+        "company": "Analytica AI",
+        "description": "Oportunidad para Data Scientist de nivel inicial o medio. Buscamos a alguien con sólidos conocimientos en Python, SQL y librerías clásicas como Scikit-Learn. Trabajo híbrido en nuestras oficinas de A Coruña.",
+        "url": "https://analytica.ai/careers/data-scientist"
+    },
+    {
+        "id": "JOB-004",
+        "title": "Lead Data Engineer",
+        "company": "FintechUK",
+        "description": "Looking for a Lead Data Engineer to redesign our data warehouses. Must have 5+ years of experience and be willing to relocate to London for on-site work.",
+        "url": "https://fintechuk.jobs/lead-data-engineer"
+    },
+    {
+        "id": "JOB-005",
+        "title": "Ingeniero de IA (LLMs & RAG)",
+        "company": "InnovaTech",
+        "description": "Buscamos desarrollador para implementar sistemas basados en IA generativa. Requisitos: Experiencia integrando modelos de lenguaje (OpenAI, Gemini), bases de datos vectoriales y orquestación con LangChain. 100% Remoto.",
+        "url": "https://innovatech.tech/empleo/ingeniero-ia-llm-rag"
+    },
+    {
+        "id": "JOB-006",
+        "title": "Backend / AI Developer",
+        "company": "Galicia Tech Hub",
+        "description": "Buscamos perfil mixto para desarrollo backend (FastAPI, Node.js) y conexión con modelos de IA. Muy valorable experiencia previa con Docker y despliegues. Formato presencial o híbrido en A Coruña.",
+        "url": "https://galiciatechhub.com/ofertas/backend-ai-dev"
+    },
+    {
+        "id": "JOB-007",
+        "title": "Principal AI Researcher",
+        "company": "DeepMind Co",
+        "description": "Requires a PhD in Computer Science and 8 years of post-doc experience in Reinforcement Learning. Remote worldwide.",
+        "url": "https://deepmind.co/careers/principal-ai-researcher"
+    },
+    {
+        "id": "JOB-008",
+        "title": "Python Developer con IA",
+        "company": "StartUp AI",
+        "description": "Buscamos programador Python con experiencia de 1-2 años. Necesario manejo de GIT, Linux y conocimientos básicos de Machine Learning. El puesto es remoto, pero se requiere viajar a Madrid una vez al mes.",
+        "url": "https://startupai.tech/jobs/python-ia"
+    },
+    {
+        "id": "JOB-009",
+        "title": "Data Scientist Senior",
+        "company": "Retail Data Solutions",
+        "description": "Se precisa Data Scientist Senior. Imprescindible 4 años de experiencia previa demostrable trabajando con grandes volúmenes de datos en el sector retail. Trabajo 100% presencial en Valencia.",
+        "url": "https://retaildatasolutions.es/ofertas/data-scientist-senior"
+    },
+    {
+        "id": "JOB-010",
+        "title": "AI Simulation Engineer",
+        "company": "GameAI Studios",
+        "description": "Looking for an engineer passionate about AI in gaming. Experience with Reinforcement Learning, Imitation Learning, and environments like Gymnasium is highly desired. Remote.",
+        "url": "https://gameaistudios.com/jobs/ai-simulation-engineer"
+    },
+    {
+        "id": "JOB-011",
+        "title": "Machine Learning Ops (MLOps) Engineer",
+        "company": "CloudML",
+        "description": "Looking for someone to help deploy ML models. Need experience with Docker, FastAPI, and CI/CD pipelines. This is a junior role. Remote.",
+        "url": "https://cloudml.tech/careers/mlops-engineer"
+    },
+    {
+        "id": "JOB-012",
+        "title": "NLP Engineer (Mid-Level)",
+        "company": "TextIA España",
+        "description": "Desarrollador NLP con 2-3 años de experiencia comercial. Manejo de Transformers y Hugging Face. Trabajo presencial en Madrid centro.",
+        "url": "https://textia.es/ofertas/nlp-engineer"
+    }
+]

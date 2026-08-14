@@ -1,0 +1,10 @@
+# Copy the docker CLI from the official Docker image to the n8n image
+FROM docker:cli AS docker_cli
+
+# n8n image with docker CLI installed
+FROM docker.n8n.io/n8nio/n8n:latest
+
+USER root
+
+# Copy the docker CLI from the docker_cli stage to the n8n image
+COPY --from=docker_cli /usr/local/bin/docker /usr/local/bin/docker

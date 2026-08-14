@@ -145,6 +145,11 @@ def process_jobs():
 
     save_results(results_list)
 
+    # Extra for gmail message
+    total_offers = len(results_list)
+    matches = sum(1 for r in results_list if "APPLY" in r["Verdict"])
+
+    print(f"Final Summary: I've evaluated {total_offers} offers. You have {matches} new matches today.")
 
 if __name__ == "__main__":
     process_jobs()

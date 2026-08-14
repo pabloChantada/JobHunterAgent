@@ -23,3 +23,4 @@ openpyxl==3.1.5
 pymupdf==1.28.2
 langdetect==1.0.9
 tenacity==9.1.4
+apify-client==3.1.2

@@ -32,7 +32,8 @@ This project serves as a portfolio piece demonstrating production-ready MLOps pr
 
 * Python 3.10 or higher
 * Docker and Docker Compose (for n8n and isolated execution)
-* *(Optional)* [Ollama CLI](https://ollama.com/) installed and running locally if using local models.
+* *(Optional)* [Ollama CLI](https://ollama.com/) installed and running locally if using local models. Or in case you run out of tokens. You'll need to run `ollama pull llama3.1` to download the model and add OLLAMA_HOST to your environment variables (name: OLLAMA_HOST,
+value: 0.0.0.0).
 
 ### Installation
 
@@ -57,8 +58,9 @@ pip install -r requirements.txt
    Create a `.env` file in the root directory and configure your keys, following the .env.example template:
 
 ```env
-GROQ_API_KEY=your_groq_api_key_here
-LLM_MODEL=groq  # Options: "groq" or "ollama"
+GROQ_API_KEY = "your_groq_api_key_here"
+LLM_MODEL = "groq"
+APIFY_API_TOKEN="your_apify_api_token_here"
 ```
 
 ### Running with Docker & n8n

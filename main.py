@@ -99,6 +99,7 @@ def process_single_job(job: dict) -> dict:
         "Verdict": "✅ APPLY" if evaluation.verdict else "❌ REJECTED",
         "Reasons": reasons_str,
         "Url": job.get('url', 'N/A'),
+        "Provider": evaluation.provider,
         "Cover Letter Path": cover_letter_path
     }
 

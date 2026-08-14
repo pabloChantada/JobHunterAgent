@@ -61,7 +61,9 @@ def generate_cover_letter_draft(job_description: str, cv_context: str, company_n
     # New llm instance with temperature for creative writing, not a lot to avoid hallucinations
     if provider == "ollama":
         from langchain_ollama import ChatOllama
-        llm_writer = ChatOllama(model="llama3.1", temperature=0.4) 
+        llm_writer = ChatOllama(model="llama3.1", 
+                                temperature=0.4,
+                                base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")) 
     else:
         from langchain_groq import ChatGroq
         # Recomendación: Llama 70B es infinitamente mejor escribiendo que los modelos pequeños

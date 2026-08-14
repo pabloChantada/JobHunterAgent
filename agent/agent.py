@@ -19,6 +19,7 @@ class JobEvaluation(BaseModel):
     score: int = Field(description="Score between 0 and 100 based on the fit of the CV with the job description.")
     verdict: bool = Field(description="True if score >= 60 and passes the exclusionary filters. False otherwise.")
     reasons: List[str] = Field(description="3 bullet points justifying the technical decision.")
+    provider: str = Field(description="LLM provider used for evaluation (e.g., 'groq' or 'ollama').")
 
 SYSTEM_PROMPT = """
 You are a strict, technical Talent Evaluator for AI/ML Engineering roles.
@@ -70,6 +71,7 @@ def get_evaluator_chain(provider: str = None):
         llm = ChatOllama(
             model="llama3.1",
             temperature=0.0, 
+            base_url=os.getenv("OLLAMA_BASE_URL", "http://host.docker.internal:11434")  # Allow the container to access the Ollama API running on the host machine
         )
     elif provider == "groq":
         # requieres GROQ_API_KEY="api_key"
@@ -91,7 +93,8 @@ default_chain = get_evaluator_chain()
     retry=retry_if_exception_type(Exception), # Catch any exception raised by Langchain/Groq
     reraise=True # If it fails 3 times, raise the error so n8n's Error Trigger catches it
 )
-def evaluate_job_offer(job_description: str, chain=default_chain) -> JobEvaluation:
+def evaluate_job_offer(job_description: str, chain=default_chain, provider: str = None) -> JobEvaluation:
+    provider = provider or os.getenv("LLM_PROVIDER", "None").lower()
     lang = detect_language_from_text(job_description)
     retriever = vectorstore.as_retriever(
         k=7,  # We have 7 chunks in the CV, so we retrieve all of them
@@ -107,6 +110,8 @@ def evaluate_job_offer(job_description: str, chain=default_chain) -> JobEvaluati
         "cv_context": cv_context,
         "job_description": job_description
     })
+
+    result.provider = provider
     
     return result
 

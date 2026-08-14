@@ -1,5 +1,7 @@
+import argparse
 import json
 import pandas as pd
+import sys
 from pathlib import Path
 from datetime import datetime
 
@@ -9,17 +11,19 @@ from agent.cover_letter import generate_cover_letter_draft
 
 BASE_DIR = Path(__file__).resolve().parent
 MOCK_JOBS_PATH = BASE_DIR / "data" / "mock_offers.json"
-EXCEL_TRACKER_PATH = BASE_DIR / "job_tracker.xlsx"
 COVER_LETTERS_DIR = BASE_DIR / "data" / "cover_letters"
+
+MASTER_TRACKER_PATH = BASE_DIR / "data" / "master_tracker.xlsx" # Long-term memory
+DAILY_REPORT_PATH = BASE_DIR / "daily_matches.xlsx" # Daily email attachment
 
 
 def get_already_processed_ids() -> set:
-    """Read the existing tracker (if any) and return the set of Job IDs already logged,
+    """Read the existing master tracker (if any) and return the set of Job IDs already logged,
     so we never re-evaluate, re-generate, or duplicate a row for the same job."""
-    if not EXCEL_TRACKER_PATH.exists():
+    if not MASTER_TRACKER_PATH.exists():
         return set()
 
-    existing_df = pd.read_excel(EXCEL_TRACKER_PATH)
+    existing_df = pd.read_excel(MASTER_TRACKER_PATH)
     if "Job ID" not in existing_df.columns:
         return set()
 
@@ -100,42 +104,43 @@ def process_single_job(job: dict) -> dict:
 
 
 def save_results(results_list: list):
-    """Save or update the Excel tracker with the newly processed results."""
+    """Save the new results to the Daily Report and append them to the Master Tracker."""
     new_data_df = pd.DataFrame(results_list)
 
-    if EXCEL_TRACKER_PATH.exists():
-        # If the Excel already exists, add the new rows
-        existing_df = pd.read_excel(EXCEL_TRACKER_PATH)
+    # Update the Master Tracker (Long-term memory)
+    if MASTER_TRACKER_PATH.exists():
+        existing_df = pd.read_excel(MASTER_TRACKER_PATH)
         updated_df = pd.concat([existing_df, new_data_df], ignore_index=True)
-        updated_df.to_excel(EXCEL_TRACKER_PATH, index=False)
-        print(f"\n[SUCCESS] {EXCEL_TRACKER_PATH} updated successfully with {len(new_data_df)} new evaluations.")
+        updated_df.to_excel(MASTER_TRACKER_PATH, index=False)
     else:
-        # If it does not exist, create it
-        new_data_df.to_excel(EXCEL_TRACKER_PATH, index=False)
-        print(f"\n[SUCCESS] {EXCEL_TRACKER_PATH} created from scratch with {len(new_data_df)} evaluations.")
+        new_data_df.to_excel(MASTER_TRACKER_PATH, index=False)
+        
+    # Create the Daily Report (Only today's data)
+    new_data_df.to_excel(DAILY_REPORT_PATH, index=False)
+    
+    print(f"\n[SUCCESS] Saved {len(new_data_df)} new evaluations to {DAILY_REPORT_PATH.name} and updated master database.")
 
 
 def process_jobs():
-    print("Starting JobHunter Pipeline...\n")
-
     # Switch to real job offers once the scraper is implemented
     if not MOCK_JOBS_PATH.exists():
         print(f"Error: File not found: {MOCK_JOBS_PATH}")
-        return
+        sys.exit(1)
 
     with open(MOCK_JOBS_PATH, 'r', encoding='utf-8') as f:
         jobs = json.load(f)
 
     # Skip jobs we've already evaluated in a previous run, whether they were
-    # approved or rejected. This is the single dedup point for the whole pipeline.
+    # approved or rejected.
     already_processed_ids = get_already_processed_ids()
     jobs_to_process = [job for job in jobs if job['id'] not in already_processed_ids]
     skipped_count = len(jobs) - len(jobs_to_process)
+    
     if skipped_count:
-        print(f"Skipping {skipped_count} job(s) already present in {EXCEL_TRACKER_PATH.name}.")
+        print(f"Skipping {skipped_count} job(s) already present in master database.")
 
     if not jobs_to_process:
-        print("No new jobs to evaluate.")
+        print("No new jobs to evaluate today.")
         return
 
     # Make the cover letter directory if it doesn't exist
@@ -151,5 +156,26 @@ def process_jobs():
 
     print(f"Final Summary: I've evaluated {total_offers} offers. You have {matches} new matches today.")
 
+def clean_files():
+    """Clean up the cover letters directory and the daily report. Keep the master tracker intact."""
+    if COVER_LETTERS_DIR.exists():
+        for file in COVER_LETTERS_DIR.iterdir():
+            if file.is_file():
+                file.unlink()
+        print(f"Cleaned up cover letters in {COVER_LETTERS_DIR}")
+
+    if DAILY_REPORT_PATH.exists():
+        DAILY_REPORT_PATH.unlink()
+        print(f"Deleted daily report file {DAILY_REPORT_PATH}")
+
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Job Hunter Agent")
+    parser.add_argument('--clean', action='store_true', help="Clean up cover letters and daily report before processing jobs.")
+    
+    args = parser.parse_args()
+
+    # Clean residual files (cover letters and daily report)
+    if args.clean:
+        clean_files()
+
     process_jobs()

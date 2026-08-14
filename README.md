@@ -37,13 +37,14 @@ This project serves as a portfolio piece demonstrating production-ready MLOps pr
 ### Installation
 
 1. **Clone the repository:**
+
 ```bash
 git clone https://github.com/yourusername/JobHunterAgent.git
 cd JobHunterAgent
 ```
 
-
 2. **Set up the virtual environment (Local Testing):**
+
 ```bash
 python -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
@@ -51,10 +52,10 @@ pip install -r requirements.txt
 ```
 
 3. **Upload your CV:**
-Place your personal CV in PDF format inside the `cv/` directory.
-
+   Place your personal CV in PDF format inside the `cv/` directory.
 4. **Environment Variables:**
-Create a `.env` file in the root directory and configure your keys, following the .env.example template:
+   Create a `.env` file in the root directory and configure your keys, following the .env.example template:
+
 ```env
 GROQ_API_KEY=your_groq_api_key_here
 LLM_MODEL=groq  # Options: "groq" or "ollama"
@@ -67,15 +68,17 @@ For the automated orchestration and containerized execution, use Docker Compose:
 ```bash
 docker-compose up -d --build
 ```
+
 *Access the n8n visual interface at `http://localhost:5678` to monitor and trigger your workflows.*
 
 ## Roadmap / TODOs
 
-* [x] **State Management (Idempotency):** Implement logic in `main.py` to ensure cover letters and evaluations are only generated for *new* job offers.
+* [X] **State Management (Idempotency):** Implement logic in `main.py` to ensure cover letters and evaluations are only generated for *new* job offers.
 * [ ] **Reporting Enhancements:** Style the Excel output (`job_tracker.xlsx`) with dynamic colors and conditional formatting using `openpyxl` after Pandas generation.
 * [ ] **Document Conversion:** Add a `.pdf` conversion pipeline for the final cover letter drafts.
 * [ ] **Prompt Engineering:** Refine and optimize the generation prompts to produce even more human-like, "Anti-AI-cliché" cover letters.
 * [ ] **LLM Evaluation Framework:** Implement automated testing and evaluation metrics (e.g., LangSmith, RAGAS) to objectively measure the LLM's scoring accuracy against a dataset.
+* [ ] **Docker Instalation:** Current installation is 2200s (36mins), most likely due to ChromaDB and other big dependencies, check if it's improvable.
 
 ---
 

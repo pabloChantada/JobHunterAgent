@@ -1,0 +1,205 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        48,
+        0
+      ],
+      "id": "09e1894f-99b6-4397-ba82-dea6d0dd198a",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "fromEmail": "pablochantadasaborido@gmail.com",
+        "toEmail": "pablochantadasaborido@gmail.com",
+        "subject": "Job Scraper - n8n Workflow",
+        "html": "=Good Morning! The JobHunterAgent process has finished its daily execution.<br><br> <b>{{ $node[\"Execute Command\"].json.stdout }}</b><br><br>\nI have attached the updated Excel file with the details.\n",
+        "options": {
+          "fileAttachments": "data"
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        0
+      ],
+      "id": "12f320da-f021-48b2-a5d3-99ca08599100",
+      "name": "Send an Email",
+      "webhookId": "90e6ab4f-0427-476e-b7c7-bc14d1d59d87",
+      "credentials": {
+        "smtp": {
+          "id": "FWraATHBIg54QjFb",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fileSelector": "/jobhunter_app/job_tracker.xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        496,
+        0
+      ],
+      "id": "361f8807-778d-4f53-895a-9825ce2c53e0",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "command": "docker exec -i jobhunter_python python main.py --clean"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        272,
+        0
+      ],
+      "id": "2dda0a1a-3fcf-41db-9c58-433cf81a8ea1",
+      "name": "Execute Command"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        48,
+        224
+      ],
+      "id": "1cb691a5-b4bf-4820-9487-1920d8711f26",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "fromEmail": "pablochantadasaborido@gmail.com",
+        "toEmail": "pablochantadasaborido@gmail.com",
+        "subject": "Job Scraper - n8n Workflow",
+        "html": "=Good Morning! The JobHunterAgent process has failed with error: <br><br> <b>{{ $node[\"Error Trigger\"].json.execution.error.message }}</b><br><br>\n\nCheck the workflow for a fix.\n",
+        "options": {
+          "fileAttachments": "data"
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        272,
+        224
+      ],
+      "id": "114ff720-38f3-4cf8-9a88-a84f14529ccc",
+      "name": "Send an Email1",
+      "webhookId": "90e6ab4f-0427-476e-b7c7-bc14d1d59d87",
+      "credentials": {
+        "smtp": {
+          "id": "FWraATHBIg54QjFb",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Files are removed everyday to have a clean start\n",
+        "height": 80,
+        "width": 150
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        208,
+        -96
+      ],
+      "typeVersion": 1,
+      "id": "3b92bf27-e485-45ce-ae3f-57996b4b408f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "This already heck for errors in python and reading\n",
+        "height": 80,
+        "width": 310
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        48,
+        368
+      ],
+      "typeVersion": 1,
+      "id": "fc30b4b8-2359-49de-a0b5-e6319e2d1760",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send an Email1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "334d3f37-9a30-458f-9a66-65a85d4c6e7e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b07376e4eef2c0a7e27ef9b5a1c245539f333a97e5d8615bc7e1bff5ecd5d167"
+  },
+  "nodeGroups": [],
+  "id": "pPL28YiUUPxpGy2i",
+  "tags": []
+}

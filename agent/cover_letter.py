@@ -1,6 +1,7 @@
 import os
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 COVER_LETTER_PROMPT = """
 You are {user_name}, a direct, professional, technical AI/ML Engineer applying for a job.
@@ -45,7 +46,13 @@ cl_prompt = ChatPromptTemplate.from_messages([
     ("human", "Redacta el mensaje de aplicación.")
 ])
 
-# We could add a .pdf conversion at some point
+# Docorator to retry in case the API fails
+@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, min=2, max=10),
+    retry=retry_if_exception_type(Exception),
+    reraise=True
+)
 def generate_cover_letter_draft(job_description: str, cv_context: str, company_name: str,
                                   job_title: str, user_name: str = "Pablo Chantada", provider: str = None) -> str:
     """Generate the cover letter in text format."""

@@ -3,6 +3,7 @@ import argparse
 from typing import List
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 from langchain_ollama import ChatOllama
 from langchain_groq import ChatGroq
@@ -84,6 +85,12 @@ def get_evaluator_chain(provider: str = None):
 
 default_chain = get_evaluator_chain()
 
+@retry(
+    stop=stop_after_attempt(3), # Try a maximum of 3 times
+    wait=wait_exponential(multiplier=1, min=2, max=10), # Wait 2s, then 4s, then up to 10s
+    retry=retry_if_exception_type(Exception), # Catch any exception raised by Langchain/Groq
+    reraise=True # If it fails 3 times, raise the error so n8n's Error Trigger catches it
+)
 def evaluate_job_offer(job_description: str, chain=default_chain) -> JobEvaluation:
     lang = detect_language_from_text(job_description)
     retriever = vectorstore.as_retriever(

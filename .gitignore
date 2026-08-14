@@ -221,3 +221,8 @@ __marimo__/
 # CV files
 data/cv/*
 data/chroma_cv/*
+data/cover_letters/*
+
+# Ignore personal xlsx files
+*.xlsx
+

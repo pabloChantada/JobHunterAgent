@@ -1,0 +1,30 @@
+version: '3.8' # Sintax version
+
+services:
+  jobhunter-agent:
+    build: .  # root directory
+    container_name: jobhunter_python
+    # Save excel and cover letters in the local machine
+    volumes:
+      - .:/app  # sync the current directory (.) with the container's /app directory
+    environment:
+      # API keys
+      - LLM_PROVIDER=groq
+      - GROQ_API_KEY=${GROQ_API_KEY}
+    
+    # Leave the container running for n8n
+    command: tail -f /dev/null 
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    container_name: n8n_orchestrator
+    ports:
+      - "5678:5678"
+    environment:
+      - GENERIC_TIMEZONE=Europe/Madrid
+    volumes:
+      - n8n_data:/home/node/.n8n  # passwords, credentials, etc. 
+      - .:/jobhunter_app  # sync the current directory (.) with the container's /jobhunter_app directory
+
+volumes:
+  n8n_data:

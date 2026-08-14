@@ -1,0 +1,23 @@
+# No need to install GPU version of PyTorch, as we are using CPU-only for this project
+# No local training
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# Core ML & RAG
+torch==2.13.0
+sentence-transformers==5.7.0
+chromadb==1.5.9
+
+# LangChain Ecosystem
+langchain-core==1.5.4
+langchain-ollama==1.1.0
+langchain-groq==1.1.3
+langchain-chroma==1.1.0
+langchain-text-splitters==1.1.2
+
+# Utils & Data
+pydantic==2.13.4
+python-dotenv==1.2.2
+pandas==3.0.5
+openpyxl==3.1.5
+pymupdf==1.28.2
+langdetect==1.0.9

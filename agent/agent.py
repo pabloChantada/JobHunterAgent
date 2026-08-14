@@ -19,7 +19,6 @@ class JobEvaluation(BaseModel):
     score: int = Field(description="Score between 0 and 100 based on the fit of the CV with the job description.")
     verdict: bool = Field(description="True if score >= 60 and passes the exclusionary filters. False otherwise.")
     reasons: List[str] = Field(description="3 bullet points justifying the technical decision.")
-    provider: str = Field(description="LLM provider used for evaluation (e.g., 'groq' or 'ollama').")
 
 SYSTEM_PROMPT = """
 You are a strict, technical Talent Evaluator for AI/ML Engineering roles.
@@ -64,13 +63,15 @@ prompt = ChatPromptTemplate.from_messages([
 
 
 def get_evaluator_chain(provider: str = None):
-    provider = (provider or os.getenv("LLM_PROVIDER", "groq")).lower()
+    provider = (provider or os.getenv("LLM_PROVIDER", "ollama")).lower()
     
     # Both with 0 temperature to avoid hallucinations 
     if provider == "ollama":
         llm = ChatOllama(
             model="llama3.1",
-            temperature=0.0, 
+            temperature=0.0,
+            num_predict=250, # Avoid infinite loops in case of a misbehaving prompt
+            timeout=30, # 30 seconds timeout for the request
             base_url=os.getenv("OLLAMA_BASE_URL", "http://host.docker.internal:11434")  # Allow the container to access the Ollama API running on the host machine
         )
     elif provider == "groq":
@@ -93,8 +94,7 @@ default_chain = get_evaluator_chain()
     retry=retry_if_exception_type(Exception), # Catch any exception raised by Langchain/Groq
     reraise=True # If it fails 3 times, raise the error so n8n's Error Trigger catches it
 )
-def evaluate_job_offer(job_description: str, chain=default_chain, provider: str = None) -> JobEvaluation:
-    provider = provider or os.getenv("LLM_PROVIDER", "None").lower()
+def evaluate_job_offer(job_description: str, chain=default_chain) -> JobEvaluation:
     lang = detect_language_from_text(job_description)
     retriever = vectorstore.as_retriever(
         k=7,  # We have 7 chunks in the CV, so we retrieve all of them
@@ -110,38 +110,5 @@ def evaluate_job_offer(job_description: str, chain=default_chain, provider: str 
         "cv_context": cv_context,
         "job_description": job_description
     })
-
-    result.provider = provider
     
     return result
-
-
-if __name__ == "__main__":
-    argsparser = argparse.ArgumentParser()
-    argsparser.add_argument("--model", choices=["groq", "ollama"], help="The LLM model to use for evaluation.")
-    argsparser.add_argument("--test", choices=["good", "bad"], default="good", help="Choose which job description to test: 'good' or 'bad'.")
-    args = argsparser.parse_args()
-
-    test_provider = args.model if args.model else os.getenv("LLM_PROVIDER", "groq").lower()
-    print(f"Using LLM provider: {test_provider}")
-    test_chain = get_evaluator_chain(test_provider)
-
-    # Example usage
-    job_description_bad = """
-    We are looking for a Senior AI/ML Engineer with at least 5 years of experience in Python, PyTorch, and LLMs.
-    The candidate must be willing to work on-site in Madrid.
-    """
-    job_description_good = """
-    Buscamos un Ingeniero de IA / Machine Learning Junior o Mid-level para unirse a nuestro equipo.
-    El candidato ideal tendrá experiencia práctica entrenando modelos de Machine Learning (PyTorch, Scikit-Learn) 
-    y desplegando APIs con FastAPI. 
-    Se valorará positivamente la experiencia previa trabajando con LLMs (RAG, Gemini) y bases de datos vectoriales.
-    El trabajo es 100% remoto, aunque tenemos oficinas en A Coruña para quien prefiera formato híbrido.
-    """
-
-    if args.test == "good":
-        evaluation = evaluate_job_offer(job_description_good, chain=test_chain)
-    else:
-        evaluation = evaluate_job_offer(job_description_bad, chain=test_chain)
-        
-    print(evaluation.model_dump_json(indent=4, ensure_ascii=False))

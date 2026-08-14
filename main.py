@@ -1,9 +1,12 @@
 import argparse
 import json
+import os
 import pandas as pd
 import sys
 from pathlib import Path
 from datetime import datetime
+import logging
+import time
 
 from agent.vectorstore import vectorstore, detect_language_from_text
 from agent.agent import evaluate_job_offer
@@ -65,18 +68,26 @@ def generate_and_save_cover_letter(job: dict) -> str:
     with open(file_path, "w", encoding="utf-8") as cl_file:
         cl_file.write(cl_content)
 
-    # Resolve the path to avoid issues with handwriting or relative paths
-    return str(file_path.resolve())
+    # Path for the n8n sheet
+    return f"data/cover_letters/{file_name}" 
 
 
 def process_single_job(job: dict) -> dict:
     """Evaluate one job offer, generate a cover letter if it's a recommended match,
     and return the row to append to the tracker."""
-    print(f"Evaluating: {job['title']} at {job['company']}...")
+
+    # Set ollama as the default fallback
+    current_provider = os.getenv("LLM_PROVIDER", "ollama").lower()
+
+    logging.info(f"Evaluating: {job['title']} at {job['company']}...")
+    start_eval_time = time.time()
 
     # Call the LLM to evaluate the offer
     evaluation = evaluate_job_offer(job['description'])
     cover_letter_path = "N/A"  # Default value if no cover letter is generated
+
+    eval_time = time.time() - start_eval_time
+    logging.info(f"Evaluation completed in {eval_time:.2f} seconds. Verdict: {'APPLY' if evaluation.verdict else 'REJECTED'}")
 
     # Combine the list of reasons into a single string separated by new lines for Excel
     reasons_str = "\n- ".join(evaluation.reasons)
@@ -85,7 +96,10 @@ def process_single_job(job: dict) -> dict:
 
     # Only generate a cover letter if the job is recommended to apply
     if evaluation.verdict:
+        start_cl_time = time.time()
         cover_letter_path = generate_and_save_cover_letter(job)
+        cl_time = time.time() - start_cl_time
+        logging.info(f"Cover letter generated in {cl_time:.2f} seconds. Saved to: {cover_letter_path}")
 
     # Format the results
     return {
@@ -99,7 +113,7 @@ def process_single_job(job: dict) -> dict:
         "Verdict": "✅ APPLY" if evaluation.verdict else "❌ REJECTED",
         "Reasons": reasons_str,
         "Url": job.get('url', 'N/A'),
-        "Provider": evaluation.provider,
+        "Provider": current_provider,
         "Cover Letter Path": cover_letter_path
     }
 
@@ -119,13 +133,13 @@ def save_results(results_list: list):
     # Create the Daily Report (Only today's data)
     new_data_df.to_excel(DAILY_REPORT_PATH, index=False)
     
-    print(f"\n[SUCCESS] Saved {len(new_data_df)} new evaluations to {DAILY_REPORT_PATH.name} and updated master database.")
+    logging.info(f"\n[SUCCESS] Saved {len(new_data_df)} new evaluations to {DAILY_REPORT_PATH.name} and updated master database.")
 
 
 def process_jobs():
     # Switch to real job offers once the scraper is implemented
     if not MOCK_JOBS_PATH.exists():
-        print(f"Error: File not found: {MOCK_JOBS_PATH}")
+        logging.error(f"Error: File not found: {MOCK_JOBS_PATH}")
         sys.exit(1)
 
     with open(MOCK_JOBS_PATH, 'r', encoding='utf-8') as f:
@@ -138,16 +152,22 @@ def process_jobs():
     skipped_count = len(jobs) - len(jobs_to_process)
     
     if skipped_count:
-        print(f"Skipping {skipped_count} job(s) already present in master database.")
+        logging.info(f"Skipping {skipped_count} job(s) already present in master database.")
 
     if not jobs_to_process:
-        print("No new jobs to evaluate today.")
+        logging.info("No new jobs to evaluate today.")
         return
 
     # Make the cover letter directory if it doesn't exist
     COVER_LETTERS_DIR.mkdir(parents=True, exist_ok=True)
 
-    results_list = [process_single_job(job) for job in jobs_to_process]
+    results_list = []
+    # This is kinda redundant, but it's useful for debugging in n8n
+    for idx, job in enumerate(jobs_to_process):
+        logging.info(f"\nProcessing job {idx + 1}/{len(jobs_to_process)}")
+        result = process_single_job(job)
+        results_list.append(result)
+        time.sleep(3)
 
     save_results(results_list)
 
@@ -155,6 +175,7 @@ def process_jobs():
     total_offers = len(results_list)
     matches = sum(1 for r in results_list if "APPLY" in r["Verdict"])
 
+    # We don't log this since it's only for the email message
     print(f"Final Summary: I've evaluated {total_offers} offers. You have {matches} new matches today.")
 
 def clean_files():
@@ -163,19 +184,25 @@ def clean_files():
         for file in COVER_LETTERS_DIR.iterdir():
             if file.is_file():
                 file.unlink()
-        print(f"Cleaned up cover letters in {COVER_LETTERS_DIR}")
-
+        logging.info(f"Cleaned up cover letters in {COVER_LETTERS_DIR}")
     if DAILY_REPORT_PATH.exists():
         DAILY_REPORT_PATH.unlink()
-        print(f"Deleted daily report file {DAILY_REPORT_PATH}")
+        logging.info(f"Deleted daily report file {DAILY_REPORT_PATH}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Job Hunter Agent")
-    parser.add_argument('--clean', action='store_true', help="Clean up cover letters and daily report before processing jobs.")
+    parser.add_argument('-c', '--clean', action='store_true', help="Clean up cover letters and daily report before processing jobs.")
+    parser.add_argument('-v', '--verbose', action='store_true', help="Activate verbose logging") # <-- Nuevo
     
     args = parser.parse_args()
 
-    # Clean residual files (cover letters and daily report)
+    log_level = logging.DEBUG if args.verbose else logging.INFO
+    logging.basicConfig(
+        level=log_level,
+        format='%(asctime)s [%(levelname)s] %(message)s',
+        datefmt='%H:%M:%S',
+    )
+
     if args.clean:
         clean_files()
 

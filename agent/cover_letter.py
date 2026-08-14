@@ -1,6 +1,7 @@
 import os
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
+from langchain_groq import ChatGroq
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 COVER_LETTER_PROMPT = """
@@ -56,17 +57,17 @@ cl_prompt = ChatPromptTemplate.from_messages([
 def generate_cover_letter_draft(job_description: str, cv_context: str, company_name: str,
                                   job_title: str, user_name: str = "Pablo Chantada", provider: str = None) -> str:
     """Generate the cover letter in text format."""
-    provider = (provider or os.getenv("LLM_PROVIDER", "groq")).lower()
+    provider = (provider or os.getenv("LLM_PROVIDER", "ollama")).lower()
     
     # New llm instance with temperature for creative writing, not a lot to avoid hallucinations
     if provider == "ollama":
         from langchain_ollama import ChatOllama
         llm_writer = ChatOllama(model="llama3.1", 
                                 temperature=0.4,
+                                num_predict=600, # Avoid infinite loops in case of a misbehaving prompt
+                                timeout=120, # 30 seconds timeout for the request
                                 base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")) 
-    else:
-        from langchain_groq import ChatGroq
-        # Recomendación: Llama 70B es infinitamente mejor escribiendo que los modelos pequeños
+    elif provider == "groq":
         llm_writer = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.4)
         
     # New chain for cover letter generation

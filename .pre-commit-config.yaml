@@ -1,0 +1,15 @@
+# Since we'll work 99% of the time in "main", just set up the same 
+# CI workflow for local commits. 
+
+# pip install pre-commit
+# pre-commit install
+
+repos:
+-   repo: local
+    hooks:
+    -   id: pylint
+        name: Analizar código con Pylint
+        entry: pylint
+        language: system
+        types: [python]
+        args: ["--fail-under=7"] # El mismo criterio que en GitHub

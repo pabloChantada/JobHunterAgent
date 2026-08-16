@@ -57,7 +57,7 @@ def extract_text(pdf_path: Path) -> str:
     normalized_text = unicodedata.normalize("NFKC", raw_text)
     return normalized_text
 
-def chunk_by_sections(text: str) -> dict:
+def chunk_by_sections(text: str) -> dict[str, str]:
     """Split text into sections based on predefined section headers.
 
     Args:
@@ -86,7 +86,7 @@ def chunk_by_sections(text: str) -> dict:
 def detect_language(filename: str) -> str:
     """Detect the language of a CV based on its filename.
 
-    Convention: *_ES.pdf for Spanish CVs, *.pdf for English CVs.
+    Convention: ``*_ES.pdf`` for Spanish CVs, ``*.pdf`` for English CVs.
 
     Args:
         filename: The name of the CV file.
@@ -97,7 +97,7 @@ def detect_language(filename: str) -> str:
     return "spanish" if filename.endswith("_ES.pdf") else "english"
 
 
-def add_cv_to_db(cv_path: Path):
+def add_cv_to_db(cv_path: Path) -> None:
     """Add a CV to the vector store, chunked by sections.
 
     Args:
@@ -142,7 +142,7 @@ def add_cv_to_db(cv_path: Path):
     print(f"Indexed {len(final_chunks)} chunks from {cv_path.name} ({language})")
 
 
-def index_all_cvs():
+def index_all_cvs() -> None:
     """Index all CVs in the data directory into the vector store."""
     for pdf_file in PATH_CV.glob("*.pdf"):
         add_cv_to_db(pdf_file)
@@ -170,20 +170,4 @@ if __name__ == "__main__":
     # pylint: disable=protected-access
     index_all_cvs()
 
-    print(f"\nTotal chunks in collection: {vectorstore._collection.count()}")
-
-    QUERY = "Interpretación de datos y visualización en Python"
-    results = vectorstore.as_retriever(
-        search_kwargs={
-            "k": 5,
-            "filter": {"language": detect_language_from_text(QUERY)},
-        }
-    ).invoke(QUERY)
-
-    print("\n--- Manual Test Results ---")
-    for result in results:
-        print(
-            f"Section: {result.metadata.get('section', 'N/A')} "
-            f"({result.metadata['language']})"
-        )
-        print(f"Text: {result.page_content[:1500]}...\n")
+    print(f"\nVector store persisted at: {vectorstore._persist_directory}")

@@ -29,6 +29,23 @@ This project serves as a portfolio piece demonstrating production-ready MLOps pr
 
 ## Getting Started
 
+The project documentation is generated using **Sphinx** and provides both
+high-level technical documentation and automatically generated API references.
+
+### Documentation structure
+
+```text
+docs/
+├── source/
+│   ├── index.rst
+│   ├── architecture.rst
+│   ├── setup.rst
+│   ├── development.rst
+│   └── api.rst
+└── build/
+    └── html/
+```
+
 ### Prerequisites
 
 * Python 3.10 or higher
@@ -56,6 +73,13 @@ pip install -r requirements.txt
 
 3. **Upload your CV:**
 Place your personal CV in PDF format inside the `cv/` directory.
+
+4. **Generate the ChromaDB embeddings:**
+
+```bash
+python agent/vectorstore.py
+```
+
 4. **Environment Variables:**
 Create a `.env` file in the root directory and configure your credentials following the `.env.example` template:
 
@@ -85,7 +109,7 @@ docker-compose up -d --build
 * [ ] **Scraper Integration:** Update the n8n workflow to fully integrate the automated web scraper (Apify).
 * [ ] **Testing:** Implement unit and integration tests using `pytest`.
 * [ ] **CI/CD Pipeline:** Finalize the Continuous Deployment (CD) pipeline using GitHub Actions.
-* [ ] **API Documentation:** Generate detailed API and CLI documentation (e.g., using Sphinx or MkDocs).
+* [x] **API Documentation:** Generate detailed API and CLI documentation (e.g., using Sphinx or MkDocs).
 * [ ] **Reporting Enhancements:** Style the Excel output (`job_tracker.xlsx`) with dynamic colors and conditional formatting using `openpyxl`.
 * [ ] **Document Conversion:** Add a `.pdf` conversion pipeline for the final cover letter drafts.
 * [ ] **Prompt Engineering:** Refine generation prompts to produce highly human-like, "anti-AI-cliché" cover letters.

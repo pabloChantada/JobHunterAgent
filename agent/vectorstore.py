@@ -22,27 +22,26 @@ SECTION_PATTERN = re.compile(
     re.MULTILINE | re.IGNORECASE,
 )
 
+def get_vectorstore() -> Chroma:
+    # Embedding model for CVs, supporting both English and Spanish.
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    )
+    # Initialize the Chroma vector store for CV embeddings
+    return Chroma(
+        collection_name="cv_embeddings",
+        embedding_function=embeddings,
+        persist_directory=PERSIST_DIR,
+    )
 
-# Embedding model for CVs, supporting both English and Spanish.
-embeddings = HuggingFaceEmbeddings(
-    model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-)
-
-# Initialize the Chroma vector store for CV embeddings
-vectorstore = Chroma(
-    collection_name="cv_embeddings",
-    embedding_function=embeddings,
-    persist_directory=PERSIST_DIR,
-)
-
-# Defines the chunking strategy for the CVs, prioritizing section/paragraph breaks.
-splitter = RecursiveCharacterTextSplitter(
-    chunk_size=1500,
-    chunk_overlap=100,
-    separators=["\n\n", "\n", ". "],
-)
-
-
+def get_splitter() -> RecursiveCharacterTextSplitter:
+    # Defines the chunking strategy for the CVs, prioritizing section/paragraph breaks.
+    return RecursiveCharacterTextSplitter(
+        chunk_size=1500,
+        chunk_overlap=100,
+        separators=["\n\n", "\n", ". "],
+    )
+    
 def extract_text(pdf_path: Path) -> str:
     """Extract text from a PDF file with proper unicode normalization.
 
@@ -117,7 +116,7 @@ def add_cv_to_db(cv_path: Path) -> None:
             continue
 
         # Split first and then tag the chunks
-        sub_chunks = splitter.split_text(section_content)
+        sub_chunks = get_splitter().split_text(section_content)
 
         for i, chunk in enumerate(sub_chunks):
             # Section name + content for context in the embedding
@@ -138,7 +137,7 @@ def add_cv_to_db(cv_path: Path) -> None:
         for m in metadatas
     ]
 
-    vectorstore.add_texts(texts=final_chunks, metadatas=metadatas, ids=ids)
+    get_vectorstore().add_texts(texts=final_chunks, metadatas=metadatas, ids=ids)
     print(f"Indexed {len(final_chunks)} chunks from {cv_path.name} ({language})")
 
 
@@ -166,8 +165,9 @@ def detect_language_from_text(text: str) -> str:
     except Exception as error:  # pylint: disable=broad-except
         print(f"Language detection failed: {error}")
         return "unknown"
+    
 if __name__ == "__main__":
     # pylint: disable=protected-access
     index_all_cvs()
 
-    print(f"\nVector store persisted at: {vectorstore._persist_directory}")
+    print(f"\nVector store persisted at: {get_vectorstore()._persist_directory}")

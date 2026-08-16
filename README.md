@@ -39,7 +39,7 @@ The documentation includes:
 - **Setup**: installation and configuration.
 - **Development**: development and extension guidelines.
 - **API Reference**: automatically generated Python API documentation using Sphinx.
-  
+
 ## Getting Started
 
 ### Prerequisites
@@ -68,8 +68,7 @@ pip install -r requirements.txt
 ```
 
 3. **Upload your CV:**
-Place your personal CV in PDF format inside the `cv/` directory.
-
+   Place your personal CV in PDF format inside the `cv/` directory.
 4. **Generate the ChromaDB embeddings:**
 
 ```bash
@@ -77,7 +76,7 @@ python agent/vectorstore.py
 ```
 
 4. **Environment Variables:**
-Create a `.env` file in the root directory and configure your credentials following the `.env.example` template:
+   Create a `.env` file in the root directory and configure your credentials following the `.env.example` template:
 
 ```env
 GROQ_API_KEY="your_groq_api_key_here"
@@ -99,14 +98,16 @@ docker-compose up -d --build
 *Access the n8n visual interface at `http://localhost:5678` to monitor, configure, and trigger your workflows.*
 
 ## Roadmap
-* [x] **State Management (Idempotency):** Implement logic in `main.py` to ensure cover letters and evaluations are only generated for *new* job offers.
-* [x] **Hybrid Architecture:** Centralized LLM provider configuration (Local Ollama vs. Cloud Groq).
+
+* [X] **State Management (Idempotency):** Implement logic in `main.py` to ensure cover letters and evaluations are only generated for *new* job offers.
+* [X] **Hybrid Architecture:** Centralized LLM provider configuration (Local Ollama vs. Cloud Groq).
 * [ ] **Scraper Integration:** Update the n8n workflow to fully integrate the automated web scraper (Apify).
 * [ ] **Testing:** Implement unit and integration tests using `pytest`.
 * [ ] **CI/CD Pipeline:** Finalize the Continuous Deployment (CD) pipeline using GitHub Actions.
-* [x] **API Documentation:** Generate detailed API and CLI documentation (e.g., using Sphinx or MkDocs).
+* [X] **API Documentation:** Generate detailed API and CLI documentation (e.g., using Sphinx or MkDocs).
 * [ ] **Reporting Enhancements:** Style the Excel output (`job_tracker.xlsx`) with dynamic colors and conditional formatting using `openpyxl`.
 * [ ] **Document Conversion:** Add a `.pdf` conversion pipeline for the final cover letter drafts.
 * [ ] **Prompt Engineering:** Refine generation prompts to produce highly human-like, "anti-AI-cliché" cover letters.
 * [ ] **LLM Evaluation Framework:** Implement automated testing metrics (e.g., LangSmith, RAGAS) to objectively measure the LLM's scoring accuracy against a dataset.
 * [ ] **Docker Optimization:** Optimize Docker build times and image size (investigate current ~36 min build time due to heavy ML dependencies).
+* [ ] **ChromaDB on Docker:** Initialize ChromaDB embeddings directly within the Docker container for a fully self-contained deployment.

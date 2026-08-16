@@ -1,4 +1,0 @@
-- Continue scraper
-  - Let's use only linkedin for now
-- Add testing
-- Add CI/CD

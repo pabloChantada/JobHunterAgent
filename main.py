@@ -15,7 +15,8 @@ from agent.cover_letter import generate_cover_letter_draft
 from agent.vectorstore import detect_language_from_text, vectorstore
 
 BASE_DIR = Path(__file__).resolve().parent
-MOCK_JOBS_PATH = BASE_DIR / "data" / "mock_offers.json"
+# MOCK_JOBS_PATH = BASE_DIR / "data" / "mock_offers.json"
+JOBS_PATH = BASE_DIR / "data" / "scraped_offers.json"
 COVER_LETTERS_DIR = BASE_DIR / "data" / "cover_letters"
 
 MASTER_TRACKER_PATH = BASE_DIR / "data" / "master_tracker.xlsx" # Long-term memory
@@ -171,11 +172,11 @@ def save_results(results_list: list):
 def process_jobs():
     """Load job offers and process them through the evaluation pipeline."""
     # Switch to real job offers once the scraper is implemented
-    if not MOCK_JOBS_PATH.exists():
-        logging.info("Error: File not found: %s", MOCK_JOBS_PATH)
+    if not JOBS_PATH.exists():
+        logging.info("Error: File not found: %s", JOBS_PATH)
         sys.exit(1)
 
-    with open(MOCK_JOBS_PATH, "r", encoding="utf-8") as f:
+    with open(JOBS_PATH, "r", encoding="utf-8") as f:
         jobs = json.load(f)
 
     # Skip jobs we've already evaluated in a previous run

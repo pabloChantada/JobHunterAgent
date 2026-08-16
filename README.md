@@ -32,8 +32,7 @@ This project serves as a portfolio piece demonstrating production-ready MLOps pr
 
 * Python 3.10 or higher
 * Docker and Docker Compose (for n8n and isolated execution)
-* *(Optional)* [Ollama CLI](https://ollama.com/) installed and running locally if using local models. Or in case you run out of tokens. You'll need to run `ollama pull llama3.1` to download the model and add OLLAMA_HOST to your environment variables (name: OLLAMA_HOST,
-value: 0.0.0.0).
+* *(Optional)* [Ollama CLI](https://ollama.com/) installed and running locally if using local models. Or in case you run out of tokens. You'll need to run `ollama pull llama3.1` to download the model and add OLLAMA_HOST to your environment variables (name: OLLAMA_HOST, value: 0.0.0.0).
 
 ### Installation
 

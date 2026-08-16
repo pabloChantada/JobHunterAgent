@@ -9,7 +9,8 @@ repos:
     hooks:
     -   id: pylint
         name: Analizar código con Pylint
-        entry: pylint
+        # Use windows rout now, add other OS if needed
+        entry: .venv/Scripts/python.exe -m pylint
         language: system
         types: [python]
         args: ["--fail-under=7"] # El mismo criterio que en GitHub

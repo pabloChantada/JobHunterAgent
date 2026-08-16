@@ -222,7 +222,8 @@ __marimo__/
 data/cv/*
 data/chroma_cv/*
 data/cover_letters/*
+data/scraped_offers.json
+data/seen_job_ids.json
 
 # Ignore personal xlsx files
 *.xlsx
-

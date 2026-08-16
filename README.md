@@ -27,24 +27,20 @@ This project serves as a portfolio piece demonstrating production-ready MLOps pr
 * **MLOps & Infrastructure:** Docker, Github Actions, Pylint.
 * **Data Processing:** Pandas, Openpyxl.
 
+## Documentation
+
+Full technical documentation is available on GitHub Pages:
+
+**[Read the documentation](https://pablochantada.github.io/JobHunterAgent/)**
+
+The documentation includes:
+
+- **Architecture**: system architecture and data flow.
+- **Setup**: installation and configuration.
+- **Development**: development and extension guidelines.
+- **API Reference**: automatically generated Python API documentation using Sphinx.
+  
 ## Getting Started
-
-The project documentation is generated using **Sphinx** and provides both
-high-level technical documentation and automatically generated API references.
-
-### Documentation structure
-
-```text
-docs/
-├── source/
-│   ├── index.rst
-│   ├── architecture.rst
-│   ├── setup.rst
-│   ├── development.rst
-│   └── api.rst
-└── build/
-    └── html/
-```
 
 ### Prerequisites
 
@@ -102,8 +98,7 @@ docker-compose up -d --build
 
 *Access the n8n visual interface at `http://localhost:5678` to monitor, configure, and trigger your workflows.*
 
-## Roadmap & Next Steps
-
+## Roadmap
 * [x] **State Management (Idempotency):** Implement logic in `main.py` to ensure cover letters and evaluations are only generated for *new* job offers.
 * [x] **Hybrid Architecture:** Centralized LLM provider configuration (Local Ollama vs. Cloud Groq).
 * [ ] **Scraper Integration:** Update the n8n workflow to fully integrate the automated web scraper (Apify).

@@ -1,11 +1,10 @@
 """Job evaluation agent for matching CVs with job descriptions."""
 import os
+
 from typing import List
 
 from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_groq import ChatGroq
-from langchain_ollama import ChatOllama
 from pydantic import BaseModel, Field
 from tenacity import (
     retry,
@@ -13,6 +12,7 @@ from tenacity import (
     wait_exponential,
     retry_if_exception_type,
 )
+from agent.llm_config import build_chat_model
 from agent.vectorstore import detect_language_from_text, vectorstore
 
 load_dotenv()  # Load environment variables from .env file
@@ -92,26 +92,17 @@ def get_evaluator_chain(provider: str = None):
     Returns:
         A chain that evaluates job offers and returns JobEvaluation.
     """
-    provider = (provider or os.getenv("LLM_PROVIDER", "ollama")).lower()
-
-    # Both with 0 temperature to avoid hallucinations
-    if provider == "ollama":
-        llm = ChatOllama(
-            model="llama3.1",
-            temperature=0.0,
-            num_predict=250,  # Avoid infinite loops
-            timeout=30,  # 30 seconds timeout
-            base_url=os.getenv(
-                "OLLAMA_BASE_URL",
-                "http://host.docker.internal:11434",
-            ),
-        )
-    elif provider == "groq":
-        llm = ChatGroq(
-            model="llama-3.3-70b-versatile", temperature=0.0
-        )
-    else:
-        raise ValueError("Unsupported provider. Use 'ollama' or 'groq'.")
+    llm = build_chat_model(
+        task="evaluator",
+        provider=provider,
+        temperature=0.0,
+        num_predict=250,  # Avoid infinite loops
+        timeout=30,  # 30 seconds timeout
+        ollama_base_url=os.getenv(
+            "OLLAMA_BASE_URL",
+            "http://host.docker.internal:11434",
+        ),
+    )
 
     return prompt | llm.with_structured_output(JobEvaluation)
 

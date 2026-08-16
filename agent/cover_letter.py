@@ -3,14 +3,13 @@ import os
 
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_groq import ChatGroq
-from langchain_ollama import ChatOllama
 from tenacity import (
     retry,
     stop_after_attempt,
     wait_exponential,
     retry_if_exception_type,
 )
+from agent.llm_config import build_chat_model
 
 COVER_LETTER_PROMPT = """
 You are {user_name}, a direct, professional, technical AI/ML Engineer
@@ -95,25 +94,16 @@ def generate_cover_letter_draft(
     Returns:
         The generated cover letter as a string.
     """
-    provider = (provider or os.getenv("LLM_PROVIDER", "ollama")).lower()
-
-    # New llm instance with temperature for creative writing
-    if provider == "ollama":
-        llm_writer = ChatOllama(
-            model="llama3.1",
-            temperature=0.4,
-            num_predict=600,  # Avoid infinite loops
-            timeout=120,  # 120 seconds timeout
-            base_url=os.getenv(
-                "OLLAMA_BASE_URL", "http://localhost:11434"
-            ),
-        )
-    elif provider == "groq":
-        llm_writer = ChatGroq(
-            model="llama-3.3-70b-versatile", temperature=0.4
-        )
-    else:
-        raise ValueError("Unsupported provider. Use 'ollama' or 'groq'.")
+    llm_writer = build_chat_model(
+        task="cover_letter",
+        provider=provider,
+        temperature=0.4,
+        num_predict=600,  # Avoid infinite loops
+        timeout=120,  # 120 seconds timeout
+        ollama_base_url=os.getenv(
+            "OLLAMA_BASE_URL", "http://localhost:11434"
+        ),
+    )
 
     # New chain for cover letter generation
     chain = cl_prompt | llm_writer | StrOutputParser()

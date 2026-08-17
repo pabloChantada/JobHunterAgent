@@ -35,7 +35,7 @@ jobs:
           GROQ_MODEL: ${{ vars.GROQ_MODEL }}
 
       - name: Persist dedup state
-        working-directory: data-repo
+        working-directory: data
         run: |
           git config user.name "job-hunter-bot"
           git config user.email "actions@users.noreply.github.com"

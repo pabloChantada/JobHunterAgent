@@ -15,6 +15,9 @@ EXCEL_PATH = Path("daily_matches.xlsx")
 
 def run_step(cmd: list[str]):
     result = subprocess.run(cmd, capture_output=True, text=True)
+    print(result.stdout)    # New logging for debugging      
+    if result.stderr:
+        print(result.stderr, file=sys.stderr)
     if result.returncode != 0:
         raise RuntimeError(f"Failed in {cmd}:\n{result.stderr}")
     return result.stdout
@@ -50,6 +53,8 @@ def main():
             EXCEL_PATH,
         )
     except Exception:
+        tb = traceback.format_exc()
+        print(tb, file=sys.stderr)
         send_email(
             "Job Scraper - ERROR",
             f"<pre>{traceback.format_exc()}</pre>",

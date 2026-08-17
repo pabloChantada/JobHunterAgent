@@ -45,7 +45,7 @@ def test_get_llm_model_uses_default_model(monkeypatch):
     for key in ("GROQ_EVALUATOR_MODEL", "GROQ_MODEL", "LLM_MODEL"):
         monkeypatch.delenv(key, raising=False)
 
-    assert llm_config.get_llm_model("groq", "evaluator") == "llama-3.3-70b-versatile"
+    assert llm_config.get_llm_model("groq", "evaluator") == "openai/gpt-oss-120b"
 
 
 def test_build_chat_model_uses_ollama_configuration(monkeypatch):

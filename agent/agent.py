@@ -106,10 +106,6 @@ def get_evaluator_chain(provider: str = None):
 
     return prompt | llm.with_structured_output(JobEvaluation)
 
-
-default_chain = get_evaluator_chain()
-
-
 @retry(
     stop=stop_after_attempt(3),  # Try a maximum of 3 times
     wait=wait_exponential(multiplier=1, min=2, max=10),  # Wait 2s, 4s, 10s
@@ -117,7 +113,7 @@ default_chain = get_evaluator_chain()
     reraise=True,  # Raise error so n8n's Error Trigger catches it
 )
 def evaluate_job_offer(
-    job_description: str, chain=default_chain
+    job_description: str, chain=None
 ) -> JobEvaluation:
     """Evaluate a job offer against the candidate's CV.
 
@@ -128,6 +124,10 @@ def evaluate_job_offer(
     Returns:
         A JobEvaluation with score, verdict, and reasons.
     """
+
+    if chain is None:
+        chain = get_evaluator_chain()
+
     lang = detect_language_from_text(job_description)
     vectorstore = get_vectorstore()
     retriever = vectorstore.as_retriever(

@@ -4,6 +4,8 @@
 ![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?style=for-the-badge&logo=docker)
 ![LangChain](https://img.shields.io/badge/LangChain-LCEL-green?style=for-the-badge)
 ![n8n](https://img.shields.io/badge/n8n-Orchestration-EA4B71?style=for-the-badge&logo=n8n)
+[![Tests](https://github.com/pabloChantada/JobHunterAgent/actions/workflows/tests.yml/badge.svg)](https://github.com/pabloChantada/JobHunterAgent/actions/workflows/tests.yml)
+[![codecov](https://codecov.io/gh/pabloChantada/JobHunterAgent/graph/badge.svg)](https://codecov.io/gh/pabloChantada/JobHunterAgent)
 
 An end-to-end automated MLOps pipeline designed to streamline the job hunting process. The **JobHunterAgent** uses RAG (Retrieval-Augmented Generation) to evaluate job descriptions against a personal CV, score the match, and automatically generate tailored cover letters for highly compatible roles.
 
@@ -98,7 +100,7 @@ docker-compose up -d --build
 ## Roadmap
 
 * [X] **Scraper Integration:** Update the n8n workflow to fully integrate the automated web scraper (Apify).
-* [ ] **Testing:** Implement unit and integration tests using `pytest`.
+* [X] **Testing:** Implement unit and integration tests using `pytest`.
 * [ ] **CI/CD Pipeline:** Finalize the Continuous Deployment (CD) pipeline using GitHub Actions.
 * [ ] **Reporting Enhancements:** Style the Excel output (`job_tracker.xlsx`) with dynamic colors and conditional formatting using `openpyxl`.
 * [ ] **Document Conversion:** Add a `.pdf` conversion pipeline for the final cover letter drafts.

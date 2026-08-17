@@ -42,13 +42,13 @@ JOB_TITLES = [
 SEARCH_QUERIES = [
     {"location": "A Coruña, Spain", "work_type": "hybrid", "date_posted": "r86400"},
     {"location": "A Coruña, Spain", "work_type": "on-site", "date_posted": "r86400"},
-    # {"location": "Santiago de Compostela, Spain", "work_type": "hybrid", "date_posted": "r86400"},
-    # {"location": "Santiago de Compostela, Spain", "work_type": "on-site", "date_posted": "r86400"},
+    {"location": "Santiago de Compostela, Spain", "work_type": "hybrid", "date_posted": "r86400"},
+    {"location": "Santiago de Compostela, Spain", "work_type": "on-site", "date_posted": "r86400"},
     # {"location": "Vigo, Spain", "work_type": "hybrid", "date_posted": "r86400"},
     # {"location": "Vigo, Spain", "work_type": "on-site", "date_posted": "r86400"},
-    # {"location": "Spain", "work_type": "hybrid", "date_posted": "r86400"},
-    # {"location": "Spain", "work_type": "remote", "date_posted": "r86400"},
-    {"location": "Worldwide", "work_type": "remote", "date_posted": "r86400"},
+    {"location": "Spain", "work_type": "hybrid", "date_posted": "r86400"},
+    {"location": "Spain", "work_type": "remote", "date_posted": "r86400"},
+    # {"location": "Worldwide", "work_type": "remote", "date_posted": "r86400"},
 ]
 
 

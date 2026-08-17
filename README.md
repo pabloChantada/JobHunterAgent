@@ -4,7 +4,7 @@
 ![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?style=for-the-badge&logo=docker)
 ![LangChain](https://img.shields.io/badge/LangChain-LCEL-green?style=for-the-badge)
 ![n8n](https://img.shields.io/badge/n8n-Orchestration-EA4B71?style=for-the-badge&logo=n8n)
-[![Tests](https://github.com/pabloChantada/JobHunterAgent/actions/workflows/tests.yml/badge.svg)](https://github.com/pabloChantada/JobHunterAgent/actions/workflows/tests.yml)
+[![Tests](https://github.com/pabloChantada/JobHunterAgent/actions/workflows/ci.yaml/badge.svg)](https://github.com/pabloChantada/JobHunterAgent/actions/workflows/ci.yaml)
 [![codecov](https://codecov.io/gh/pabloChantada/JobHunterAgent/graph/badge.svg)](https://codecov.io/gh/pabloChantada/JobHunterAgent)
 
 An end-to-end automated MLOps pipeline designed to streamline the job hunting process. The **JobHunterAgent** uses RAG (Retrieval-Augmented Generation) to evaluate job descriptions against a personal CV, score the match, and automatically generate tailored cover letters for highly compatible roles.

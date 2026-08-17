@@ -25,7 +25,7 @@ This project serves as a portfolio piece demonstrating production-ready MLOps pr
 * **Scraping & Automation:** Apify (for job listing extraction) and n8n (for workflow orchestration).
 * **Vector Store:** ChromaDB (PersistentClient).
 * **Embeddings:** `sentence-transformers` (paraphrase-multilingual-MiniLM-L12-v2).
-* **LLMs (Model-Agnostic):** Groq (Llama 3.3 70B) for high-speed cloud execution / Ollama (qwen2.5-coder) for local, zero-cost development.
+* **LLMs (Model-Agnostic):** Groq (openai/gpt-oss-120b) for high-speed cloud execution / Ollama (qwen2.5-coder) for local, zero-cost development.
 * **MLOps & Infrastructure:** Docker, Github Actions, Pylint.
 * **Data Processing:** Pandas, Openpyxl.
 
@@ -48,7 +48,7 @@ The documentation includes:
 
 * Python 3.10 or higher
 * Docker and Docker Compose (for n8n and isolated execution)
-* *(Optional)* [Ollama CLI](https://ollama.com/) installed and running locally if using local models. To configure this, run `ollama pull qwen2.5-coder` to download the model and add `OLLAMA_HOST` to your environment variables (Name: `OLLAMA_HOST`, Value: `0.0.0.0`).
+* *(Optional)* [Ollama CLI](https://ollama.com/) installed and running locally if using local models. To configure this, run `ollama pull <model>` to download the model and add `OLLAMA_HOST` to your environment variables (Name: `OLLAMA_HOST`, Value: `0.0.0.0`).
 
 ### Installation
 

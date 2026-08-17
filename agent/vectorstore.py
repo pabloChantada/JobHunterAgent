@@ -22,17 +22,23 @@ SECTION_PATTERN = re.compile(
     re.MULTILINE | re.IGNORECASE,
 )
 
+# Global variable to hold the Chroma vectorstore instance
+# and avoid re-initializing it multiple times.
+_vectorstore_instance = None
+
 def get_vectorstore() -> Chroma:
-    # Embedding model for CVs, supporting both English and Spanish.
-    embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
-    )
-    # Initialize the Chroma vector store for CV embeddings
-    return Chroma(
-        collection_name="cv_embeddings",
-        embedding_function=embeddings,
-        persist_directory=PERSIST_DIR,
-    )
+    """Return the shared Chroma vectorstore instance, creating it on first use."""
+    global _vectorstore_instance
+    if _vectorstore_instance is None:
+        embeddings = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+        )
+        _vectorstore_instance = Chroma(
+            collection_name="cv_embeddings",
+            embedding_function=embeddings,
+            persist_directory=PERSIST_DIR,
+        )
+    return _vectorstore_instance
 
 def get_splitter() -> RecursiveCharacterTextSplitter:
     # Defines the chunking strategy for the CVs, prioritizing section/paragraph breaks.
@@ -169,5 +175,11 @@ def detect_language_from_text(text: str) -> str:
 if __name__ == "__main__":
     # pylint: disable=protected-access
     index_all_cvs()
+    
+    # Force initialization even if no PDFs were found
+    db = get_vectorstore()
 
-    print(f"\nVector store persisted at: {get_vectorstore()._persist_directory}")
+    if _vectorstore_instance is not None:
+        print(f"\nVector store persisted at: {PERSIST_DIR}")
+    else:
+        raise RuntimeError("Vector store instance was not created. Check the indexing process.")

@@ -55,7 +55,6 @@ The documentation includes:
 ```bash
 git clone [https://github.com/pabloChantada/JobHunterAgent.git](https://github.com/pabloChantada/JobHunterAgent.git)
 cd JobHunterAgent
-
 ```
 
 2. **Set up the virtual environment (Local Testing):**
@@ -64,7 +63,6 @@ cd JobHunterAgent
 python -m venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-
 ```
 
 3. **Upload your CV:**
@@ -99,15 +97,10 @@ docker-compose up -d --build
 
 ## Roadmap
 
-* [X] **State Management (Idempotency):** Implement logic in `main.py` to ensure cover letters and evaluations are only generated for *new* job offers.
-* [X] **Hybrid Architecture:** Centralized LLM provider configuration (Local Ollama vs. Cloud Groq).
 * [ ] **Scraper Integration:** Update the n8n workflow to fully integrate the automated web scraper (Apify).
 * [ ] **Testing:** Implement unit and integration tests using `pytest`.
 * [ ] **CI/CD Pipeline:** Finalize the Continuous Deployment (CD) pipeline using GitHub Actions.
-* [X] **API Documentation:** Generate detailed API and CLI documentation (e.g., using Sphinx or MkDocs).
 * [ ] **Reporting Enhancements:** Style the Excel output (`job_tracker.xlsx`) with dynamic colors and conditional formatting using `openpyxl`.
 * [ ] **Document Conversion:** Add a `.pdf` conversion pipeline for the final cover letter drafts.
 * [ ] **Prompt Engineering:** Refine generation prompts to produce highly human-like, "anti-AI-cliché" cover letters.
 * [ ] **LLM Evaluation Framework:** Implement automated testing metrics (e.g., LangSmith, RAGAS) to objectively measure the LLM's scoring accuracy against a dataset.
-* [ ] **Docker Optimization:** Optimize Docker build times and image size (investigate current ~36 min build time due to heavy ML dependencies).
-* [ ] **ChromaDB on Docker:** Initialize ChromaDB embeddings directly within the Docker container for a fully self-contained deployment.

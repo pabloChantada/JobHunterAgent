@@ -7,6 +7,7 @@ services:
     # Save excel and cover letters in the local machine
     volumes:
       - .:/app  # sync the current directory (.) with the container's /app directory
+      - chroma_data:/app/chroma_cv  # persist Chroma vector store data
     environment:
       # API keys
       - LLM_PROVIDER=${LLM_PROVIDER}
@@ -46,3 +47,4 @@ services:
 
 volumes:
   n8n_data:
+  chroma_data:

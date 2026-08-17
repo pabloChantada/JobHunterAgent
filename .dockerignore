@@ -1,0 +1,9 @@
+.git
+.venv
+__pycache__
+*.pyc
+docs/build
+*.xlsx
+.env
+n8n/
+.pre-commit-config.yaml

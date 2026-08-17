@@ -1,14 +1,18 @@
-# light python image
+# syntax=docker/dockerfile:1.7
 FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
 WORKDIR /app
 
-# install dependencies into the working directory
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -r requirements.txt
 
-# copy the full code to the container
 COPY . .
 
-# run main flow for the moment
+RUN python -m agent.vectorstore
+
 CMD ["python", "main.py"]

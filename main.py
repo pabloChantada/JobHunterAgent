@@ -12,7 +12,7 @@ import pandas as pd
 
 from agent.agent import evaluate_job_offer
 from agent.cover_letter import generate_cover_letter_draft
-from agent.vectorstore import detect_language_from_text, vectorstore
+from agent.vectorstore import detect_language_from_text, get_vectorstore
 
 BASE_DIR = Path(__file__).resolve().parent
 # MOCK_JOBS_PATH = BASE_DIR / "data" / "mock_offers.json"
@@ -50,7 +50,7 @@ def generate_and_save_cover_letter(job: dict) -> str:
     """
     # Add context from the CV to the cover letter generation
     lang = detect_language_from_text(job["description"])
-    retriever = vectorstore.as_retriever(
+    retriever = get_vectorstore().as_retriever(
         search_kwargs={"k": 7, "filter": {"language": lang}}
     )
 

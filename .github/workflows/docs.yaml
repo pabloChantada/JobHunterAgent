@@ -8,7 +8,7 @@ on:
       - "docs/**"
       - "agent/**"
       - "scraper/**"
-      - ".github/workflows/docs.yml"
+      - ".github/workflows/docs.yaml"
 
   workflow_dispatch:
 
@@ -33,7 +33,7 @@ jobs:
       - name: Install documentation dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r docs/requirements.txt
+          pip install -r docs/requirements-doc.txt
 
       - name: Build Sphinx documentation
         run: |

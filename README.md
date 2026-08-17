@@ -97,7 +97,7 @@ docker-compose up -d --build
 
 ## Roadmap
 
-* [ ] **Scraper Integration:** Update the n8n workflow to fully integrate the automated web scraper (Apify).
+* [X] **Scraper Integration:** Update the n8n workflow to fully integrate the automated web scraper (Apify).
 * [ ] **Testing:** Implement unit and integration tests using `pytest`.
 * [ ] **CI/CD Pipeline:** Finalize the Continuous Deployment (CD) pipeline using GitHub Actions.
 * [ ] **Reporting Enhancements:** Style the Excel output (`job_tracker.xlsx`) with dynamic colors and conditional formatting using `openpyxl`.

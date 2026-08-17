@@ -42,13 +42,13 @@ JOB_TITLES = [
 SEARCH_QUERIES = [
     {"location": "A Coruña, Spain", "work_type": "hybrid", "date_posted": "r86400"},
     {"location": "A Coruña, Spain", "work_type": "on-site", "date_posted": "r86400"},
-    {"location": "Santiago de Compostela, Spain", "work_type": "hybrid", "date_posted": "r86400"},
-    {"location": "Santiago de Compostela, Spain", "work_type": "on-site", "date_posted": "r86400"},
-    {"location": "Vigo, Spain", "work_type": "hybrid", "date_posted": "r86400"},
-    {"location": "Vigo, Spain", "work_type": "on-site", "date_posted": "r86400"},
-    {"location": "Spain", "work_type": "hybrid", "date_posted": "r86400"},
-    {"location": "Spain", "work_type": "remote", "date_posted": "r86400"},
-    # {"location": "Worldwide", "work_type": "remote", "date_posted": "r86400"},
+    # {"location": "Santiago de Compostela, Spain", "work_type": "hybrid", "date_posted": "r86400"},
+    # {"location": "Santiago de Compostela, Spain", "work_type": "on-site", "date_posted": "r86400"},
+    # {"location": "Vigo, Spain", "work_type": "hybrid", "date_posted": "r86400"},
+    # {"location": "Vigo, Spain", "work_type": "on-site", "date_posted": "r86400"},
+    # {"location": "Spain", "work_type": "hybrid", "date_posted": "r86400"},
+    # {"location": "Spain", "work_type": "remote", "date_posted": "r86400"},
+    {"location": "Worldwide", "work_type": "remote", "date_posted": "r86400"},
 ]
 
 
@@ -308,13 +308,22 @@ def prune_seen_ids(
 ) -> dict[str, str]:
     """Drop entries older than retention_days so the file does not grow forever."""
     cutoff = datetime.now(timezone.utc) - timedelta(days=retention_days)
-    pruned: dict[str, str] = {}
-    for key, date_str in seen.items():
+    pruned = {}
+    for job_id, date_str in seen.items():
         try:
-            if datetime.fromisoformat(date_str) >= cutoff:
-                pruned[key] = date_str
+            # Parse the date string and force it to be UTC aware
+            item_date = datetime.fromisoformat(date_str)
+            # If the loaded date is naive, make it aware (assume UTC)
+            if item_date.tzinfo is None:
+                item_date = item_date.replace(tzinfo=timezone.utc)
+                
+            if item_date >= cutoff:
+                pruned[job_id] = date_str
         except ValueError:
-            continue  # drop malformed entries rather than crash
+            # If the date format is completely broken, skip it
+            logging.warning(f"Invalid date format for ID {job_id}: {date_str}. Discarding.")
+            continue
+            
     return pruned
 
 
@@ -322,7 +331,7 @@ def save_seen_ids(seen: dict[str, str], path: Path) -> None:
     """Persist the seen offer IDs to disk."""
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as file_handle:
-        json.dump(seen, file_handle, ensure_ascii=False, indent=2)
+        json.dump(seen, file_handle, ensure_ascii=False, indent=4)
 
 
 def run_scraper() -> None:

@@ -14,10 +14,10 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.3,
       "position": [
-        48,
-        0
+        -416,
+        96
       ],
-      "id": "09e1894f-99b6-4397-ba82-dea6d0dd198a",
+      "id": "79f95f61-ef8d-4b01-b719-cd115074db4f",
       "name": "Schedule Trigger"
     },
     {
@@ -25,7 +25,7 @@
         "fromEmail": "pablochantadasaborido@gmail.com",
         "toEmail": "pablochantadasaborido@gmail.com",
         "subject": "Job Scraper - n8n Workflow",
-        "html": "=Good Morning! The JobHunterAgent process has finished its daily execution.<br><br> <b>{{ $node[\"Execute Command\"].json.stdout }}</b><br><br>\nI have attached the updated Excel file with the details.\n",
+        "html": "=Good Morning! The JobHunterAgent process has finished its daily execution.<br><br> <b>{{ $node[\"Offer Analizer\"].json.stdout }}</b><br><br>\nI have attached the updated Excel file with the details.\n",
         "options": {
           "fileAttachments": "data"
         }
@@ -33,55 +33,28 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        720,
-        0
+        448,
+        96
       ],
-      "id": "12f320da-f021-48b2-a5d3-99ca08599100",
+      "id": "5bda5141-6112-4c46-82d5-1ef6f69b15db",
       "name": "Send an Email",
       "webhookId": "90e6ab4f-0427-476e-b7c7-bc14d1d59d87",
       "credentials": {
         "smtp": {
-          "id": "FWraATHBIg54QjFb",
+          "id": "LX3Fe0SyiarGlbZ3",
           "name": "SMTP account"
         }
       }
-    },
-    {
-      "parameters": {
-        "fileSelector": "/jobhunter_app/job_tracker.xlsx",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.readWriteFile",
-      "typeVersion": 1.1,
-      "position": [
-        496,
-        0
-      ],
-      "id": "361f8807-778d-4f53-895a-9825ce2c53e0",
-      "name": "Read/Write Files from Disk"
-    },
-    {
-      "parameters": {
-        "command": "docker exec -i jobhunter_python python main.py --clean"
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [
-        272,
-        0
-      ],
-      "id": "2dda0a1a-3fcf-41db-9c58-433cf81a8ea1",
-      "name": "Execute Command"
     },
     {
       "parameters": {},
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
       "position": [
-        48,
-        224
+        -224,
+        320
       ],
-      "id": "1cb691a5-b4bf-4820-9487-1920d8711f26",
+      "id": "074433b4-267f-43b6-b1fc-2980eecf635a",
       "name": "Error Trigger"
     },
     {
@@ -97,15 +70,15 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        272,
-        224
+        0,
+        320
       ],
-      "id": "114ff720-38f3-4cf8-9a88-a84f14529ccc",
+      "id": "7baf6f4a-cd45-433a-a8ce-cba344d7eba2",
       "name": "Send an Email1",
       "webhookId": "90e6ab4f-0427-476e-b7c7-bc14d1d59d87",
       "credentials": {
         "smtp": {
-          "id": "FWraATHBIg54QjFb",
+          "id": "LX3Fe0SyiarGlbZ3",
           "name": "SMTP account"
         }
       }
@@ -118,11 +91,11 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        208,
-        -96
+        -64,
+        0
       ],
       "typeVersion": 1,
-      "id": "3b92bf27-e485-45ce-ae3f-57996b4b408f",
+      "id": "4a8ffecb-b102-4c0f-87d3-b1050762ca88",
       "name": "Sticky Note"
     },
     {
@@ -133,12 +106,52 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        48,
-        368
+        -224,
+        464
       ],
       "typeVersion": 1,
-      "id": "fc30b4b8-2359-49de-a0b5-e6319e2d1760",
+      "id": "fe39de96-8126-4f2b-a4e6-b0c81b32f7dc",
       "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "command": "docker exec -i jobhunter_python python scraper/scraper.py"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        96
+      ],
+      "id": "76d868a5-4985-47e8-8e67-4269919284bf",
+      "name": "Scraper"
+    },
+    {
+      "parameters": {
+        "command": "docker exec -i jobhunter_python python main.py --clean"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        0,
+        96
+      ],
+      "id": "366ba2bc-9205-42ca-a5f2-a0cccee766b0",
+      "name": "Offer Analizer"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/jobhunter_app/daily_matches.xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        96
+      ],
+      "id": "a4247f11-ded4-49b2-8e3e-47db6e27bb6e",
+      "name": "Write Excel File"
     }
   ],
   "pinData": {},
@@ -147,29 +160,7 @@
       "main": [
         [
           {
-            "node": "Execute Command",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Read/Write Files from Disk": {
-      "main": [
-        [
-          {
-            "node": "Send an Email",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Execute Command": {
-      "main": [
-        [
-          {
-            "node": "Read/Write Files from Disk",
+            "node": "Scraper",
             "type": "main",
             "index": 0
           }
@@ -186,20 +177,56 @@
           }
         ]
       ]
+    },
+    "Offer Analizer": {
+      "main": [
+        [
+          {
+            "node": "Write Excel File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Excel File": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scraper": {
+      "main": [
+        [
+          {
+            "node": "Offer Analizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
-    "availableInMCP": false
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "EzDMxRMwzNoPKD7k",
+    "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "334d3f37-9a30-458f-9a66-65a85d4c6e7e",
+  "versionId": "748ebd7e-1685-4d0d-8a21-6c59b0d0ee03",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "b07376e4eef2c0a7e27ef9b5a1c245539f333a97e5d8615bc7e1bff5ecd5d167"
+    "instanceId": "544ea97fb260680c7a73f5e4b1530bced79b752217a7108ccaaa7e2bf1a2d9f5"
   },
   "nodeGroups": [],
-  "id": "pPL28YiUUPxpGy2i",
+  "id": "EzDMxRMwzNoPKD7k",
   "tags": []
 }

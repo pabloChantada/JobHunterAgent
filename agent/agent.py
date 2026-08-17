@@ -13,7 +13,7 @@ from tenacity import (
     retry_if_exception_type,
 )
 from agent.llm_config import build_chat_model
-from agent.vectorstore import detect_language_from_text, vectorstore
+from agent.vectorstore import detect_language_from_text, get_vectorstore
 
 load_dotenv()  # Load environment variables from .env file
 
@@ -129,6 +129,7 @@ def evaluate_job_offer(
         A JobEvaluation with score, verdict, and reasons.
     """
     lang = detect_language_from_text(job_description)
+    vectorstore = get_vectorstore()
     retriever = vectorstore.as_retriever(
         k=7,  # We have 7 chunks in the CV
         search_kwargs={"filter": {"language": lang}},

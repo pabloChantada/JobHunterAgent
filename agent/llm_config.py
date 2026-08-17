@@ -13,8 +13,8 @@ DEFAULT_MODELS = {
         "cover_letter": "llama3.1",
     },
     "groq": {
-        "evaluator": "llama-3.3-70b-versatile",
-        "cover_letter": "llama-3.3-70b-versatile",
+        "evaluator": "openai/gpt-oss-120b",
+        "cover_letter": "openai/gpt-oss-120b",
     },
 }
 

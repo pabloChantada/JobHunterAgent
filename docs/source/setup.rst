@@ -47,7 +47,7 @@ Example:
     OLLAMA_BASE_URL=http://localhost:11434
 
     GROQ_API_KEY=
-    GROQ_MODEL=llama-3.3-70b-versatile
+    GROQ_MODEL=openai/gpt-oss-120b
 
     APIFY_API_TOKEN=
 

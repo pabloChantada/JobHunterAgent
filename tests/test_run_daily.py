@@ -80,7 +80,7 @@ def test_send_email_with_existing_attachment(smtp_env, mock_smtp, tmp_path):
     attachment = tmp_path / "daily_matches.xlsx"
     attachment.write_bytes(b"fake-excel-bytes")
 
-    run_daily.send_email("Subject", "<b>body</b>", attachment)
+    run_daily.send_email("Subject", "<b>body</b>", [attachment])
 
     sent_msg = instance.send_message.call_args[0][0]
     attachments = [p for p in sent_msg.walk() if p.get_content_disposition() == "attachment"]
@@ -94,7 +94,7 @@ def test_send_email_skips_missing_attachment(smtp_env, mock_smtp, tmp_path):
     _, instance = mock_smtp
     missing = tmp_path / "does_not_exist.xlsx"
 
-    run_daily.send_email("Subject", "<b>body</b>", missing)
+    run_daily.send_email("Subject", "<b>body</b>", [missing])
 
     sent_msg = instance.send_message.call_args[0][0]
     attachments = [p for p in sent_msg.walk() if p.get_content_disposition() == "attachment"]
@@ -124,10 +124,12 @@ def test_main_happy_path_runs_steps_in_order_and_sends_success_email(smtp_env):
     assert first_call_args == ["python", "scraper/scraper.py"]
 
     mock_send_email.assert_called_once()
-    subject, body, attachment = mock_send_email.call_args[0]
+    # Unpack 3 arguments, change variable name to attachments to be clear
+    subject, body, attachments = mock_send_email.call_args[0] 
     assert subject == "Job Scraper - Daily Run"
     assert "analyzer ok" in body
-    assert attachment == run_daily.EXCEL_PATH
+    # Assert against the list of paths now passed in main()
+    assert attachments == [run_daily.EXCEL_PATH, run_daily.MASTER_EXCEL_PATH]
 
 
 def test_main_error_path_sends_error_email_and_exits_nonzero(smtp_env):

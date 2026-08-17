@@ -12,6 +12,7 @@ from pathlib import Path
 
 DATA_DIR = Path("data")  # private data repo, not checked into git
 EXCEL_PATH = Path("daily_matches.xlsx") 
+MASTER_EXCEL_PATH = DATA_DIR / "master_matches.xlsx"
 
 def run_step(cmd: list[str]):
     result = subprocess.run(cmd, capture_output=True, text=True)
@@ -22,7 +23,7 @@ def run_step(cmd: list[str]):
         raise RuntimeError(f"Failed in {cmd}:\n{result.stderr}")
     return result.stdout
 
-def send_email(subject: str, body_html: str, attachment: Path | None = None):
+def send_email(subject: str, body_html: str, attachments: list[Path] | None = None):
     msg = EmailMessage()
     msg["From"] = os.environ["SMTP_USER"]
     msg["To"] = os.environ["SMTP_USER"]
@@ -30,13 +31,15 @@ def send_email(subject: str, body_html: str, attachment: Path | None = None):
     msg.set_content("View HTML version")
     msg.add_alternative(body_html, subtype="html")
 
-    if attachment and attachment.exists():
-        msg.add_attachment(
-            attachment.read_bytes(),
-            maintype="application",
-            subtype="vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            filename=attachment.name,
-        )
+    if attachments:
+        for attachment in attachments:
+            if attachment.exists():
+                msg.add_attachment(
+                    attachment.read_bytes(),
+                    maintype="application",
+                    subtype="vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    filename=attachment.name,
+                )
 
     with smtplib.SMTP(os.environ["SMTP_HOST"], int(os.environ["SMTP_PORT"])) as s:
         s.starttls()
@@ -50,7 +53,7 @@ def main():
         send_email(
             "Job Scraper - Daily Run",
             f"Daily run completed.<br><br><b>{analyzer_out}</b>. Here's the daily matches report:",
-            EXCEL_PATH,
+            [EXCEL_PATH, MASTER_EXCEL_PATH]  
         )
     except Exception:
         tb = traceback.format_exc()

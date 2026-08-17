@@ -99,9 +99,7 @@ docker-compose up -d --build
 
 ## Roadmap
 
-* [X] **Scraper Integration:** Update the n8n workflow to fully integrate the automated web scraper (Apify).
-* [X] **Testing:** Implement unit and integration tests using `pytest`.
-* [ ] **CI/CD Pipeline:** Finalize the Continuous Deployment (CD) pipeline using GitHub Actions.
+* 
 * [ ] **Reporting Enhancements:** Style the Excel output (`job_tracker.xlsx`) with dynamic colors and conditional formatting using `openpyxl`.
 * [ ] **Document Conversion:** Add a `.pdf` conversion pipeline for the final cover letter drafts.
 * [ ] **Prompt Engineering:** Refine generation prompts to produce highly human-like, "anti-AI-cliché" cover letters.

@@ -88,6 +88,6 @@ def test_build_chat_model_uses_groq_configuration(monkeypatch):
     )
 
     assert model.kwargs == {
-        "model": "llama-3.3-70b-versatile",
+        "model": "openai/gpt-oss-120b",
         "temperature": 0.4,
     }

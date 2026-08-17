@@ -62,6 +62,7 @@ jobs:
             --cov=agent \
             --cov=scraper \
             --cov=main \
+            --cov=run_daily \
             --cov-report=term-missing \
             --cov-report=xml
 

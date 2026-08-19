@@ -49,6 +49,12 @@ def send_email(subject: str, body_html: str, attachments: list[Path] | None = No
 def main():
     try:
         scraper_out = run_step(["python", "scraper/scraper.py"])
+
+        # Add indexation step to the daily run, since we can't save the
+        # DB on the repo or Github Actions. 
+        vector_out = run_step(["python", "-m", "agent.vectorstore"])
+        print(vector_out) 
+        
         analyzer_out = run_step(["python", "main.py", "--clean"])
         send_email(
             "Job Scraper - Daily Run",

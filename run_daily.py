@@ -10,9 +10,24 @@ import traceback
 from email.message import EmailMessage
 from pathlib import Path
 
+from agent.vectorstore import index_all_cvs
+
 DATA_DIR = Path("data")  # private data repo, not checked into git
 EXCEL_PATH = Path("daily_matches.xlsx") 
 MASTER_EXCEL_PATH = DATA_DIR / "master_matches.xlsx"
+
+PATH_CV = Path("data/cv")
+PERSIST_DIR = "data/chroma_cv"
+
+def ensure_vectorstore():
+    """Ensure the vector store is populated."""
+    chroma_path = Path(PERSIST_DIR)
+    
+    if not chroma_path.exists() or not any(chroma_path.iterdir()):
+        print("The vector store is empty. Indexing all CVs...")
+        index_all_cvs()
+    else:
+        print("The vector store is populated.")
 
 def run_step(cmd: list[str]):
     result = subprocess.run(cmd, capture_output=True, text=True)
@@ -48,25 +63,34 @@ def send_email(subject: str, body_html: str, attachments: list[Path] | None = No
 
 def main():
     try:
+        #  Run the scraper to find new job offers
+        print("Starting scraper...")
         scraper_out = run_step(["python", "scraper/scraper.py"])
+        print(scraper_out)
 
-        # Add indexation step to the daily run, since we can't save the
-        # DB on the repo or Github Actions. 
-        vector_out = run_step(["python", "-m", "agent.vectorstore"])
-        print(vector_out) 
+        # Ensure CV indexation (needed for GA)
+        print("Checking vector store database...")
+        ensure_vectorstore()
         
+        # Run the evaluator agent
+        print("Starting LLM evaluation...")
         analyzer_out = run_step(["python", "main.py", "--clean"])
+        
+        # Send the email
+        print("Sending email report...")
         send_email(
             "Job Scraper - Daily Run",
-            f"Daily run completed.<br><br><b>{analyzer_out}</b>. Here's the daily matches report:",
+            f"Daily run completed.<br><br><b>{analyzer_out}</b><br><br>Here's the daily matches report:",
             [EXCEL_PATH, MASTER_EXCEL_PATH]  
         )
+        print("Process completed successfully!")
+
     except Exception:
         tb = traceback.format_exc()
         print(tb, file=sys.stderr)
         send_email(
             "Job Scraper - ERROR",
-            f"<pre>{traceback.format_exc()}</pre>",
+            f"<pre>{tb}</pre>",
         )
         sys.exit(1)
 

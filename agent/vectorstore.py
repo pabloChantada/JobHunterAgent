@@ -12,6 +12,8 @@ from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langdetect import detect
+from langdetect import DetectorFactory
+DetectorFactory.seed = 0
 
 PATH_CV = Path("data/cv")
 PERSIST_DIR = "data/chroma_cv"
@@ -167,10 +169,10 @@ def detect_language_from_text(text: str) -> str:
             return "spanish"
         if detected_lang == "en":
             return "english"
-        return "unknown"
-    except Exception as error:  # pylint: disable=broad-except
+        return None  
+    except Exception as error:
         print(f"Language detection failed: {error}")
-        return "unknown"
+        return None
     
 if __name__ == "__main__":
     # pylint: disable=protected-access

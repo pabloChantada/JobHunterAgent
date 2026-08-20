@@ -129,11 +129,10 @@ def evaluate_job_offer(
         chain = get_evaluator_chain()
 
     lang = detect_language_from_text(job_description)
-    vectorstore = get_vectorstore()
-    retriever = vectorstore.as_retriever(
-        k=7,  # We have 7 chunks in the CV
-        search_kwargs={"filter": {"language": lang}},
-    )
+    search_kwargs = {"k": 7}
+    if lang:
+        search_kwargs["filter"] = {"language": lang}
+    retriever = get_vectorstore().as_retriever(search_kwargs=search_kwargs)
 
     # Retrieve chunks
     docs = retriever.invoke(job_description)

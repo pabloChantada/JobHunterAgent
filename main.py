@@ -50,9 +50,10 @@ def generate_and_save_cover_letter(job: dict) -> str:
     """
     # Add context from the CV to the cover letter generation
     lang = detect_language_from_text(job["description"])
-    retriever = get_vectorstore().as_retriever(
-        search_kwargs={"k": 7, "filter": {"language": lang}}
-    )
+    search_kwargs = {"k": 7}
+    if lang:
+        search_kwargs["filter"] = {"language": lang}
+    retriever = get_vectorstore().as_retriever(search_kwargs=search_kwargs)
 
     # Search for relevant CV chunks based on the job description
     docs = retriever.invoke(job["description"])

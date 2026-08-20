@@ -20,9 +20,16 @@ PATH_CV = Path("data/cv")
 PERSIST_DIR = "data/chroma_cv"
 
 def ensure_vectorstore():
-    """Ensure the vector store is populated."""
     chroma_path = Path(PERSIST_DIR)
-    
+    cv_path = Path(PATH_CV)
+
+    print(f"DEBUG: Looking for CV folder at: {cv_path.absolute()}")
+    if cv_path.exists():
+        files = [f.name for f in cv_path.iterdir()]
+        print(f"DEBUG: Files found inside 'cv': {files}")
+    else:
+        print(f"CRITICAL ERROR: Folder {cv_path} DOES NOT EXIST!")
+
     if not chroma_path.exists() or not any(chroma_path.iterdir()):
         print("The vector store is empty. Indexing all CVs...")
         index_all_cvs()

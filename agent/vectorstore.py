@@ -149,10 +149,14 @@ def add_cv_to_db(cv_path: Path) -> None:
     print(f"Indexed {len(final_chunks)} chunks from {cv_path.name} ({language})")
 
 
-def index_all_cvs() -> None:
-    """Index all CVs in the data directory into the vector store."""
-    for pdf_file in PATH_CV.glob("*.pdf"):
-        add_cv_to_db(pdf_file)
+def index_all_cvs():
+    pdf_files = list(PATH_CV.glob("*.[pP][dD][fF]"))
+    
+    if not pdf_files:
+        print(f"ERROR: No PDF files found in {PATH_CV}")
+        return
+
+    print(f"Found {len(pdf_files)} PDFs. Indexing...")
 
 def detect_language_from_text(text: str) -> str:
     """Detect the language of text using langdetect.

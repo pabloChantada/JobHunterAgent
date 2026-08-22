@@ -158,6 +158,9 @@ def index_all_cvs():
 
     print(f"Found {len(pdf_files)} PDFs. Indexing...")
 
+    for cv_path in pdf_files:
+        add_cv_to_db(cv_path)
+
 def detect_language_from_text(text: str) -> str:
     """Detect the language of text using langdetect.
 

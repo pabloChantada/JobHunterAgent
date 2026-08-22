@@ -61,6 +61,6 @@ def test_evaluate_job_offer_retrieves_cv_in_job_language(monkeypatch):
     assert result.score == 80
     assert result.verdict is True
     assert vectorstore.kwargs["search_kwargs"]["filter"]["language"] == "english"
-    assert vectorstore.kwargs["k"] == 7
+    assert vectorstore.kwargs["search_kwargs"]["k"] == 7
     assert chain.payload["job_description"] == "Python AI Engineer role"
     assert "Python" in chain.payload["cv_context"]

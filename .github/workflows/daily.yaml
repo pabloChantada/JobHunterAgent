@@ -1,5 +1,7 @@
 name: Daily job hunt
-
+permissions:
+  contents: read
+  
 on:
   schedule:
     - cron: '0 7 * * *' # Run at 7:00 AM UTC every day

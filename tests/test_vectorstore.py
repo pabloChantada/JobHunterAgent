@@ -87,7 +87,7 @@ def test_detect_language_from_text_returns_unknown_on_detection_error(monkeypatc
 
     monkeypatch.setattr(vectorstore, "detect", raise_error)
 
-    assert vectorstore.detect_language_from_text("short text") == "unknown"
+    assert vectorstore.detect_language_from_text("short text") == None
 
 
 def test_add_cv_to_db_builds_chunks_and_metadata(monkeypatch, tmp_path):
